@@ -47,6 +47,11 @@ trait InstallsApiStack
         // Configuration...
         $files->copyDirectory(__DIR__.'/../../stubs/api/config', config_path());
 
+        file_put_contents(
+            base_path('config/app.php'),
+            str_replace("'url' => env('APP_URL', 'http://localhost'),", "'url' => env('APP_URL', 'http://localhost'),".PHP_EOL.PHP_EOL."    'frontend_url' => env('FRONTEND_URL', 'http://localhost:3000'),", file_get_contents(base_path('config/app.php')))
+        );
+
         // Environment...
         if (! $files->exists(base_path('.env'))) {
             copy(base_path('.env.example'), base_path('.env'));
