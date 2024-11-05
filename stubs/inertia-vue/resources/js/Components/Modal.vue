@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
     show: {
@@ -17,17 +17,19 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+const showSlot = ref(props.show);
 
-watch(
-    () => props.show,
-    () => {
-        if (props.show) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = null;
-        }
-    },
-);
+watch(() => props.show, () => {
+    if (props.show) {
+        document.body.style.overflow = 'hidden';
+        showSlot.value = true;
+    } else {
+        document.body.style.overflow = null;
+        setTimeout(() => {
+            showSlot.value = false;
+        }, 200);
+    }
+});
 
 const close = () => {
     if (props.closeable) {
@@ -36,8 +38,12 @@ const close = () => {
 };
 
 const closeOnEscape = (e) => {
-    if (e.key === 'Escape' && props.show) {
-        close();
+    if (e.key === 'Escape') {
+        e.preventDefault();
+
+        if (props.show) {
+            close();
+        }
     }
 };
 
@@ -50,10 +56,10 @@ onUnmounted(() => {
 
 const maxWidthClass = computed(() => {
     return {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
+        'sm': 'sm:max-w-sm',
+        'md': 'sm:max-w-md',
+        'lg': 'sm:max-w-lg',
+        'xl': 'sm:max-w-xl',
         '2xl': 'sm:max-w-2xl',
     }[props.maxWidth];
 });
@@ -99,7 +105,7 @@ const maxWidthClass = computed(() => {
                         class="mb-6 transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full dark:bg-gray-800"
                         :class="maxWidthClass"
                     >
-                        <slot v-if="show" />
+                        <slot v-if="showSlot" />
                     </div>
                 </Transition>
             </div>
