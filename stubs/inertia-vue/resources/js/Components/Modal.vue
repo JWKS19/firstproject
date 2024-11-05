@@ -26,7 +26,7 @@ watch(() => props.show, () => {
         showSlot.value = true;
         dialog.value?.showModal();
     } else {
-        document.body.style.overflow = null;
+        document.body.style.overflow = '';
         setTimeout(() => {
             dialog.value?.close();
             showSlot.value = false;
@@ -54,7 +54,7 @@ onMounted(() => document.addEventListener('keydown', closeOnEscape));
 
 onUnmounted(() => {
     document.removeEventListener('keydown', closeOnEscape);
-    document.body.style.overflow = null;
+    document.body.style.overflow = '';
 });
 
 const maxWidthClass = computed(() => {
